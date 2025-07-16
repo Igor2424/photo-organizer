@@ -1,6 +1,6 @@
 # 📸 Photo Organizer by Year
 
-This simple Python script organizes your photos into folders by year, based on the original creation date from their EXIF metadata. If EXIF data isn't available, it falls back to the file's last modified time.
+This simple Python script organizes your photos into folders by year, based on the original creation date from their EXIF metadata. If EXIF data isn't available, it falls back to the file's last modified time. I created this script because I was trying to organize my current photos and I saw how could I do it more quickly.
 
 ## ✅ Features
 

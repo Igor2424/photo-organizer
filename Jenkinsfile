@@ -1,6 +1,11 @@
 pipeline {
     agent any
 
+    environment {
+        PYTHON_HOME = 'C:\\Python310' // Change this to your Python installation path
+        PATH = "${env.PYTHON_HOME};${env.PYTHON_HOME}\\Scripts;${env.PATH}"
+    }
+
     stages {
         stage('Checkout') {
             steps {
@@ -10,32 +15,39 @@ pipeline {
 
         stage('Setup Environment') {
             steps {
-                bat '''
-                    python -m venv venv
+                bat """
+                    REM Create virtual environment
+                    %PYTHON_HOME%\\python.exe -m venv venv
+
+                    REM Activate venv
                     call venv\\Scripts\\activate
-                    pip install --upgrade pip
-                    if exist requirements.txt pip install -r requirements.txt
-                '''
+
+                    REM Upgrade pip
+                    %PYTHON_HOME%\\Scripts\\pip.exe install --upgrade pip
+
+                    REM Install requirements if file exists
+                    if exist requirements.txt %PYTHON_HOME%\\Scripts\\pip.exe install -r requirements.txt
+                """
             }
         }
 
         stage('Lint') {
             steps {
-                bat '''
+                bat """
                     call venv\\Scripts\\activate
-                    pip install flake8
+                    %PYTHON_HOME%\\Scripts\\pip.exe install flake8
                     flake8 . || exit 0
-                '''
+                """
             }
         }
 
         stage('Test') {
             steps {
-                bat '''
+                bat """
                     call venv\\Scripts\\activate
-                    pip install pytest
+                    %PYTHON_HOME%\\Scripts\\pip.exe install pytest
                     pytest || echo "No tests found"
-                '''
+                """
             }
         }
     }
@@ -45,10 +57,10 @@ pipeline {
             echo 'Pipeline finished!'
         }
         success {
-            echo 'All good ✅'
+            echo 'All stages completed successfully ✅'
         }
         failure {
-            echo 'Something went wrong ❌'
+            echo 'Pipeline failed ❌'
         }
     }
 }

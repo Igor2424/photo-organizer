@@ -10,32 +10,30 @@ pipeline {
 
         stage('Setup Environment') {
             steps {
-                sh '''
-                    python3 -m venv venv
-                    source venv/bin/activate
+                bat '''
+                    python -m venv venv
+                    call venv\\Scripts\\activate
                     pip install --upgrade pip
-                    if [ -f requirements.txt ]; then
-                        pip install -r requirements.txt
-                    fi
+                    if exist requirements.txt pip install -r requirements.txt
                 '''
             }
         }
 
         stage('Lint') {
             steps {
-                sh '''
-                    source venv/bin/activate
+                bat '''
+                    call venv\\Scripts\\activate
                     pip install flake8
-                    flake8 . || true
+                    flake8 . || exit 0
                 '''
             }
         }
 
         stage('Test') {
             steps {
-                sh '''
-                    source venv/bin/activate
-                    pip install pytest || true
+                bat '''
+                    call venv\\Scripts\\activate
+                    pip install pytest
                     pytest || echo "No tests found"
                 '''
             }

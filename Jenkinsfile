@@ -1,10 +1,6 @@
 pipeline {
     agent any
 
-    tools {
-        python 'Python3'   // Configure Python in Jenkins Tools if needed
-    }
-
     stages {
         stage('Checkout') {
             steps {
@@ -18,7 +14,9 @@ pipeline {
                     python3 -m venv venv
                     source venv/bin/activate
                     pip install --upgrade pip
-                    pip install -r requirements.txt || true
+                    if [ -f requirements.txt ]; then
+                        pip install -r requirements.txt
+                    fi
                 '''
             }
         }
@@ -37,6 +35,7 @@ pipeline {
             steps {
                 sh '''
                     source venv/bin/activate
+                    pip install pytest || true
                     pytest || echo "No tests found"
                 '''
             }
